@@ -36,6 +36,7 @@
 ApproximationModel::ApproximationModel(QObject *parent) :
     QAbstractTableModel(parent), m_dataSet(), m_fit(&m_dataSet)
 {
+    m_fit.extractPeak();
 }
 
 int ApproximationModel::rowCount(const QModelIndex &parent) const
