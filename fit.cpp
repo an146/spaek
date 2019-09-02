@@ -51,7 +51,7 @@ bool Fit::extractPeak(bool force)
     auto fL = 5.;
     auto sigma = fG / (2. * std::sqrt(std::log(2.)));
     auto gamma = fL / 2.;
-    push_back(Voigt((*m_dataSet)[i].first, sigma, gamma, *mp * 0.95));
+    push_back(Voigt((*m_dataSet)[i].first, sigma, gamma, *mp * 0.85));
     auto left_backup = m_left;
     auto e = error();
     calc_left();
