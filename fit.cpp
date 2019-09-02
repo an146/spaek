@@ -14,29 +14,6 @@ bool Fit::learn()
 
 bool Fit::extractPeak()
 {
-    /* test code
-    Voigt v(50, 2, 3, 150);
-    {
-        Voigt v_(50 + 1e-10, 2, 3, 150);
-        std::cout << (v.value(300) - v.value(300)) / 1e-10 << std::endl;
-        std::cout << v.d_xpeak(300) << std::endl;
-    }
-    {
-        Voigt v_(50, 2 + 1e-10, 3, 150);
-        std::cout << (v_.value(300) - v.value(300)) / 1e-10 << std::endl;
-        std::cout << v.d_sigma(300) << std::endl;
-    }
-    {
-        Voigt v_(50, 2, 3 + 1e-10, 150);
-        std::cout << (v_.value(300) - v.value(300)) / 1e-10 << std::endl;
-        std::cout << v.d_gamma(300) << std::endl;
-    }
-    {
-        Voigt v_(50, 2, 3, 150 + 1e-10);
-        std::cout << (v_.value(300) - v.value(300)) / 1e-10 << std::endl;
-        std::cout << v.d_height(300) << std::endl;
-    }
-    */
     return false;
 }
 
