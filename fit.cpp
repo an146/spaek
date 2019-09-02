@@ -23,10 +23,11 @@ bool Fit::learn(double rate)
             auto x = m_dataSet->at(j).first;
             auto v = at(i).value(x);
             ref[j] += v;
-            at(i).xpeak -= 2 * (ref[j] - v) * at(i).d_xpeak(x) * rate;
-            at(i).sigma -= 2 * (ref[j] - v) * at(i).d_sigma(x) * rate;
-            at(i).gamma -= 2 * (ref[j] - v) * at(i).d_gamma(x) * rate;
-            at(i).height -= 2 * (ref[j] - v) * at(i).d_height(x) * rate;
+            Voigt g = at(i).grad(x);
+            at(i).xpeak -= 2 * (ref[j] - v) * g.xpeak * rate;
+            at(i).sigma -= 2 * (ref[j] - v) * g.sigma * rate;
+            at(i).gamma -= 2 * (ref[j] - v) * g.gamma * rate;
+            at(i).height -= 2 * (ref[j] - v) * g.height * rate;
         }
     }
     calc_left();
@@ -51,7 +52,7 @@ bool Fit::extractPeak(bool force)
     auto fL = 5.;
     auto sigma = fG / (2. * std::sqrt(std::log(2.)));
     auto gamma = fL / 2.;
-    push_back(Voigt((*m_dataSet)[i].first, sigma, gamma, *mp * 0.85));
+    push_back(Voigt((*m_dataSet)[i].first, sigma, gamma, *mp * 1.));
     auto left_backup = m_left;
     auto e = error();
     calc_left();

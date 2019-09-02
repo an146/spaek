@@ -13,10 +13,7 @@ public:
     //actual value
     double value(double) const;
     //derivatives
-    double d_xpeak(double) const;
-    double d_sigma(double) const;
-    double d_gamma(double) const;
-    double d_height(double) const;
+    Voigt grad(double) const;
 };
 
 #endif // VOIGT_H
