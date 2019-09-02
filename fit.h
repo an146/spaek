@@ -16,6 +16,7 @@ public:
     void calc_left();
     double error() const;
     using std::vector<Voigt>::size;
+    void save() const;
 private:
     DataSet *m_dataSet;
     bool m_dirty;  //when need to recompute render

@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <fstream>
 #include <iostream>
 #include "fit.h"
 
@@ -50,7 +51,7 @@ bool Fit::extractPeak(bool force)
     auto fL = 5.;
     auto sigma = fG / (2. * std::sqrt(std::log(2.)));
     auto gamma = fL / 2.;
-    push_back(Voigt((*m_dataSet)[i].first, sigma, gamma, *mp));
+    push_back(Voigt((*m_dataSet)[i].first, sigma, gamma, *mp * 0.95));
     auto left_backup = m_left;
     auto e = error();
     calc_left();
@@ -87,6 +88,15 @@ double Fit::error() const
     for (auto l : m_left)
         ret += l * l;
     return ret;
+}
+
+void Fit::save() const
+{
+    std::ofstream o("fit.txt");
+    o << "\"xpeak\" \"sigma\" \"gamma\" \"height\"" << std::endl;
+    for (const auto &v : *this)
+        o << v.xpeak << " " << v.sigma << " " << v.gamma << " " << v.height << std::endl;
+    std::cout << "saved" << std::endl;
 }
 
 const std::vector<double> &Fit::render() const

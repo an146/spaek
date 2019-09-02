@@ -38,7 +38,7 @@ ApproximationModel::ApproximationModel(QObject *parent) :
             if (!m_fit.extractPeak(true))
                 break;
             for (int i = 0; i < 1000; i++)
-                if (!m_fit.learn(1e-5))
+                if (!m_fit.learn(1e-6))
                     break;
         }
         for (int i = 0; i < 10000; i++)
@@ -46,6 +46,7 @@ ApproximationModel::ApproximationModel(QObject *parent) :
                 break;
     }
     std::cout << "Extracted " << m_fit.size() << " peaks" << std::endl;
+    m_fit.save();
 }
 
 int ApproximationModel::rowCount(const QModelIndex &parent) const
