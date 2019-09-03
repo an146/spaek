@@ -33,16 +33,16 @@
 ApproximationModel::ApproximationModel(QObject *parent) :
     QAbstractTableModel(parent), m_dataSet(), m_fit(&m_dataSet)
 {
-    for (int k = 0; k < 10; k++) {
+    for (int k = 0; k < 20; k++) {
         for (int i = 0; i < 350; i++) {
             if (!m_fit.extractPeak(true))
                 break;
             for (int i = 0; i < 1000; i++)
-                if (!m_fit.learn(1e-6))
+                if (!m_fit.learn(2e-8))
                     break;
         }
         for (int i = 0; i < 10000; i++)
-            if (!m_fit.learn(3e-7))
+            if (!m_fit.learn(1e-9))
                 break;
     }
     std::cout << "Extracted " << m_fit.size() << " peaks" << std::endl;

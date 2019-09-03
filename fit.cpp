@@ -46,13 +46,14 @@ bool Fit::learn(double rate)
 bool Fit::extractPeak(bool force)
 {
     assert(!m_left.empty());
+    assert(m_dataSet->size() == m_left.size());
     auto mp = std::max_element(m_left.begin(), m_left.end());
     auto i = static_cast<size_t>(mp - m_left.begin());
     auto fG = 5.;
     auto fL = 5.;
     auto sigma = fG / (2. * std::sqrt(std::log(2.)));
     auto gamma = fL / 2.;
-    push_back(Voigt((*m_dataSet)[i].first, sigma, gamma, *mp * 1.));
+    push_back(Voigt(m_dataSet->at(i).first, sigma, gamma, *mp * 1.));
     auto left_backup = m_left;
     auto e = error();
     calc_left();
@@ -93,10 +94,18 @@ double Fit::error() const
 
 void Fit::save() const
 {
-    std::ofstream o("fit.txt");
-    o << "\"xpeak\" \"sigma\" \"gamma\" \"height\"" << std::endl;
-    for (const auto &v : *this)
-        o << v.xpeak << " " << v.sigma << " " << v.gamma << " " << v.height << std::endl;
+    {
+        std::ofstream o("fit.txt");
+        o << "\"xpeak\" \"sigma\" \"gamma\" \"height\"" << std::endl;
+        for (const auto &v : *this)
+            o << v.xpeak << " " << v.sigma << " " << v.gamma << " " << v.height << std::endl;
+    }
+    {
+        std::ofstream o("left.txt");
+        o << "\"x\" \"y'\"" << std::endl;
+        for (size_t i = 0; i < m_dataSet->size(); i++)
+            o << m_dataSet->at(i).first << " " << m_left[i] << std::endl;
+    }
     std::cout << "saved" << std::endl;
 }
 
