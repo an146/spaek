@@ -69,5 +69,6 @@ Voigt Voigt::grad(double x) const
 
     ret.height = wZ / wPeakZ;
 
+    ret.xpeak = 0.;
     return ret;
 }

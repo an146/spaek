@@ -37,12 +37,13 @@ ApproximationModel::ApproximationModel(QObject *parent) :
         for (int i = 0; i < 350; i++) {
             if (!m_fit.extractPeak(true))
                 break;
-            for (int i = 0; i < 1000; i++)
-                if (!m_fit.learn(2e-8))
+            m_fit.save();
+            for (int i = 0; i < 2000; i++)
+                if (!m_fit.learn(1e-6))
                     break;
         }
-        for (int i = 0; i < 10000; i++)
-            if (!m_fit.learn(1e-9))
+        for (int i = 0; i < 100000; i++)
+            if (!m_fit.learn(1e-8))
                 break;
     }
     std::cout << "Extracted " << m_fit.size() << " peaks" << std::endl;

@@ -24,15 +24,16 @@ bool Fit::learn(double rate)
             auto v = at(i).value(x);
             ref[j] += v;
             Voigt g = at(i).grad(x);
-            at(i).xpeak -= 2 * (ref[j] - v) * g.xpeak * rate;
-            at(i).sigma -= 2 * (ref[j] - v) * g.sigma * rate;
-            at(i).gamma -= 2 * (ref[j] - v) * g.gamma * rate;
-            at(i).height -= 2 * (ref[j] - v) * g.height * rate;
+            at(i).xpeak += 2 * (ref[j] - v) * g.xpeak * rate;
+            at(i).sigma += 2 * (ref[j] - v) * g.sigma * rate;
+            at(i).gamma += 2 * (ref[j] - v) * g.gamma * rate;
+            at(i).height += 2 * (ref[j] - v) * g.height * rate;
         }
     }
     calc_left();
+    status_prefix();
     if (error() < e) {
-        std::cout << "Successful learn: " << error() << " < " << e << std::endl;
+        std::cout << "Successful learn: " << error() << " < " << e << "\r" << std::flush;
         m_dirty = true;
         return true;
     } else {
@@ -57,6 +58,7 @@ bool Fit::extractPeak(bool force)
     auto left_backup = m_left;
     auto e = error();
     calc_left();
+    status_prefix();
     if (error() < e) {
         std::cout << "Successful fit at x=" << back().xpeak << ": " << error() << " < " << e << std::endl;
         m_dirty = true;
@@ -106,6 +108,7 @@ void Fit::save() const
         for (size_t i = 0; i < m_dataSet->size(); i++)
             o << m_dataSet->at(i).first << " " << m_left[i] << std::endl;
     }
+    status_prefix();
     std::cout << "saved" << std::endl;
 }
 
@@ -118,4 +121,9 @@ const std::vector<double> &Fit::render() const
         }
     }
     return m_render;
+}
+
+void Fit::status_prefix() const
+{
+    std::cout << "[" << size() << "] ";
 }
