@@ -17,19 +17,20 @@ bool Fit::learn(double rate)
 {
     auto backup = *this;
     auto e = error();
-    for (size_t i = 0; i < size(); i++) {
+    for (auto i = begin(); i != end(); ++i) {
         std::vector<double> ref = m_left;
         for (size_t j = 0; j < m_dataSet->size(); j++) {
             auto x = m_dataSet->at(j).first;
-            auto v = at(i).value(x);
+            auto v = i->value(x);
             ref[j] += v;
-            Voigt g = at(i).grad(x);
-            at(i).xpeak += 2 * (ref[j] - v) * g.xpeak * rate;
-            at(i).sigma += 2 * (ref[j] - v) * g.sigma * rate;
-            at(i).gamma += 2 * (ref[j] - v) * g.gamma * rate;
-            at(i).height += 2 * (ref[j] - v) * g.height * rate;
+            Voigt g = i->grad(x);
+            i->xpeak += 2 * (ref[j] - v) * g.xpeak * rate;
+            i->sigma += 2 * (ref[j] - v) * g.sigma * rate;
+            i->gamma += 2 * (ref[j] - v) * g.gamma * rate;
+            i->height += 2 * (ref[j] - v) * g.height * rate;
         }
     }
+    handle_negative_coeffs();
     calc_left();
     status_prefix();
     if (error() < e) {
@@ -54,7 +55,7 @@ bool Fit::extractPeak(bool force)
     auto fL = 5.;
     auto sigma = fG / (2. * std::sqrt(std::log(2.)));
     auto gamma = fL / 2.;
-    push_back(Voigt(m_dataSet->at(i).first, sigma, gamma, *mp * 1.));
+    push_back(Voigt(m_dataSet->at(i).first, sigma, gamma, *mp * 0.95));
     auto left_backup = m_left;
     auto e = error();
     calc_left();
@@ -94,6 +95,28 @@ double Fit::error() const
     return ret;
 }
 
+void Fit::load()
+{
+    std::ifstream i("fit.txt");
+    std::string s;   //header
+    i >> s;
+    assert(s == "\"xpeak\"");
+    i >> s;
+    assert(s == "\"sigma\"");
+    i >> s;
+    assert(s == "\"gamma\"");
+    i >> s;
+    assert(s == "\"height\"");
+
+    Voigt v(0, 0, 0, 0);
+    while (i >> v.xpeak >> v.sigma >> v.gamma >> v.height)
+        push_back(v);
+    calc_left();
+    m_dirty = true;
+    status_prefix();
+    std::cout << "loaded" << std::endl;
+}
+
 void Fit::save() const
 {
     {
@@ -126,4 +149,14 @@ const std::vector<double> &Fit::render() const
 void Fit::status_prefix() const
 {
     std::cout << "[" << size() << "] ";
+}
+
+void Fit::handle_negative_coeffs()
+{
+    for (auto i = begin(); i != end(); ++i)
+        if (i->xpeak <= 0. || i->sigma <= .0 || i->gamma <= .0 || i->height <= .0) {
+            erase(i);
+            extractPeak(false);
+            break;
+        }
 }

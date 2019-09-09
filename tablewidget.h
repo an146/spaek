@@ -37,7 +37,7 @@ class TableWidget : public QWidget
     Q_OBJECT
 
 public:
-    TableWidget(QWidget *parent = 0);
+    TableWidget(bool justShow, bool learn, QWidget *parent = 0);
 };
 
 #endif // TABLEWIDGET_H

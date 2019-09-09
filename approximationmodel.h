@@ -40,7 +40,7 @@ class ApproximationModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit ApproximationModel(QObject *parent = 0);
+    explicit ApproximationModel(bool learn, bool justLearn, QObject *parent = 0);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
     int columnCount(const QModelIndex &parent = QModelIndex()) const;

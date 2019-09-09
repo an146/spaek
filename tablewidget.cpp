@@ -39,13 +39,13 @@
 
 QT_CHARTS_USE_NAMESPACE
 
-TableWidget::TableWidget(QWidget *parent)
+TableWidget::TableWidget(bool justShow, bool learn, QWidget *parent)
     : QWidget(parent)
 {
     // create simple model for storing data
     // user's table data model
     //! [1]
-    ApproximationModel *model = new ApproximationModel;
+    ApproximationModel *model = new ApproximationModel(!justShow, learn);
     //! [1]
 
     //! [2]

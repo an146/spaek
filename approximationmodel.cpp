@@ -30,24 +30,34 @@
 #include <iostream>
 #include "approximationmodel.h"
 
-ApproximationModel::ApproximationModel(QObject *parent) :
+ApproximationModel::ApproximationModel(bool learn, bool justLearn, QObject *parent) :
     QAbstractTableModel(parent), m_dataSet(), m_fit(&m_dataSet)
 {
-    for (int k = 0; k < 20; k++) {
+    m_fit.load();
+    if (justLearn) {
         for (int i = 0; i < 350; i++) {
-            if (!m_fit.extractPeak(true))
-                break;
+            for (int i = 0; i < 1000; i++)
+                if (!m_fit.learn(1e-5))
+                    break;
             m_fit.save();
-            for (int i = 0; i < 2000; i++)
-                if (!m_fit.learn(1e-6))
+        }
+    } else if (learn) {
+        for (int k = 0; k < 20; k++) {
+            for (int i = 0; i < 350; i++) {
+                if (!m_fit.extractPeak(false))
+                    break;
+                m_fit.save();
+                for (int i = 0; i < 1000; i++)
+                    if (!m_fit.learn(1e-6))
+                        break;
+            }
+            for (int i = 0; i < 100000; i++)
+                if (!m_fit.learn(1e-7))
                     break;
         }
-        for (int i = 0; i < 100000; i++)
-            if (!m_fit.learn(1e-8))
-                break;
+        std::cout << "Extracted " << m_fit.size() << " peaks" << std::endl;
+        m_fit.save();
     }
-    std::cout << "Extracted " << m_fit.size() << " peaks" << std::endl;
-    m_fit.save();
 }
 
 int ApproximationModel::rowCount(const QModelIndex &parent) const
